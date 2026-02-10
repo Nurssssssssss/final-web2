@@ -23,6 +23,11 @@ const userRoutes = require('./routes/userRoutes');
 const albumRoutes = require('./routes/albumRoutes');
 const photoRoutes = require('./routes/photoRoutes');
 
+app.get('/', (req, res) => {
+  res.send('Backend is running');
+});
+
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/albums', albumRoutes);
