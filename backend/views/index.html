@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Photography Portfolio</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+        input, button { display: block; margin: 10px 0; padding: 8px; width: 100%; }
+        .hidden { display: none; }
+        #albums div { border: 1px solid #ccc; padding: 10px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>Photography Portfolio</h1>
+
+    <!-- Регистрация -->
+    <div id="registerDiv">
+        <h2>Register</h2>
+        <input type="text" id="regUsername" placeholder="Username">
+        <input type="email" id="regEmail" placeholder="Email">
+        <input type="password" id="regPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+    </div>
+
+    <!-- Логин -->
+    <div id="loginDiv">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <!-- Профиль и альбомы -->
+    <div id="profileDiv" class="hidden">
+        <h2>Profile</h2>
+        <div id="profileInfo"></div>
+
+        <h3>Create Album</h3>
+        <input type="text" id="albumTitle" placeholder="Album Title">
+        <input type="text" id="albumDesc" placeholder="Album Description">
+        <button onclick="createAlbum()">Create Album</button>
+
+        <h3>Your Albums</h3>
+        <div id="albums"></div>
+
+        <button onclick="logout()">Logout</button>
+    </div>
+
+<script>
+let token = null;
+
+// API URL
+const API_URL = "http://localhost:5000/api";
+
+// Регистрация
+async function register() {
+    const username = document.getElementById('regUsername').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+
+    const res = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password })
+    });
+    const data = await res.json();
+    alert(data.message);
+}
+
+// Логин
+async function login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const res = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (data.token) {
+        token = data.token;
+        document.getElementById('loginDiv').classList.add('hidden');
+        document.getElementById('registerDiv').classList.add('hidden');
+        document.getElementById('profileDiv').classList.remove('hidden');
+        loadProfile();
+        loadAlbums();
+    } else {
+        alert(data.message);
+    }
+}
+
+// Профиль
+async function loadProfile() {
+    const res = await fetch(`${API_URL}/users/profile`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    document.getElementById('profileInfo').innerHTML = `
+        Username: ${data.user.username} <br>
+        Email: ${data.user.email} <br>
+        Role: ${data.user.role}
+    `;
+}
+
+// Создать альбом
+async function createAlbum() {
+    const title = document.getElementById('albumTitle').value;
+    const description = document.getElementById('albumDesc').value;
+
+    const res = await fetch(`${API_URL}/albums`, {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ title, description })
+    });
+    const album = await res.json();
+    alert('Album created!');
+    loadAlbums();
+}
+
+// Загрузить альбомы
+async function loadAlbums() {
+    const res = await fetch(`${API_URL}/albums`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const albums = await res.json();
+    const albumsDiv = document.getElementById('albums');
+    albumsDiv.innerHTML = '';
+    albums.forEach(a => {
+        const div = document.createElement('div');
+        div.innerHTML = `<b>${a.title}</b><br>${a.description}`;
+        albumsDiv.appendChild(div);
+    });
+}
+
+// Выход
+function logout() {
+    token = null;
+    document.getElementById('loginDiv').classList.remove('hidden');
+    document.getElementById('registerDiv').classList.remove('hidden');
+    document.getElementById('profileDiv').classList.add('hidden');
+}
+</script>
+</body>
+</html>
