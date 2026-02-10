@@ -7,9 +7,12 @@ dotenv.config();
 
 const app = express();
 
-// 🔹 CORS - разрешаем запросы с фронтенда
+// CORS - разрешаем запросы с фронтенда
 app.use(cors({
-  origin: 'http://localhost:5173', // Vite dev server
+  origin: [
+    'http://localhost:5173',
+    'https://final-web2-qkl6.onrender.com/'
+  ],
   credentials: true
 }));
 
@@ -17,7 +20,7 @@ app.use(express.json());
 
 connectDB();
 
-// 🔀 API Routes
+// API Routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const albumRoutes = require('./routes/albumRoutes');
@@ -26,7 +29,6 @@ const photoRoutes = require('./routes/photoRoutes');
 app.get('/', (req, res) => {
   res.send('Backend is running');
 });
-
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
