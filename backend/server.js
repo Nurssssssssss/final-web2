@@ -7,13 +7,10 @@ dotenv.config();
 
 const app = express();
 
-// CORS - разрешаем запросы с фронтенда
-const cors = require('cors')
-
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://final-web2-qkl6.onrender.com/'
+    'https://final-web2-frontend.onrender.com'
   ],
   credentials: true
 }));
@@ -22,7 +19,6 @@ app.use(express.json());
 
 connectDB();
 
-// API Routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const albumRoutes = require('./routes/albumRoutes');
