@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://final-web2-qkl6.onrender.com/api';
 
 const getToken = (): string | null => {
   return localStorage.getItem('token');
