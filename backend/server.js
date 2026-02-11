@@ -8,6 +8,8 @@ dotenv.config();
 const app = express();
 
 // CORS - разрешаем запросы с фронтенда
+const cors = require('cors')
+
 app.use(cors({
   origin: [
     'http://localhost:5173',
