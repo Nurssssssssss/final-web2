@@ -11,6 +11,9 @@ FrontX is a web application for storing and viewing images with album support an
 - Node.js  
 - npm or yarn  
 - MongoDB (local instance or MongoDB Atlas)
+![photo_1_2026-02-13_16-48-0![photo_1_2026-02-13_16-48-05](https://github.com/user-attachments/assets/a02d544d-d6f3-4203-9c6c-aa932627c690)
+
+https://github.com/user-attachments/assets/15307590-5c55-4c2d-b654-c7ba41d82122
 
 ### 2. Clone the project
 
