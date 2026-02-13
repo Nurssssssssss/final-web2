@@ -11,8 +11,9 @@ const {
 } = require('../controllers/photoController');
 
 router.post('/', protect, createPhoto);
-router.get('/', protect, getPhotos);
-router.get('/:id', protect, getPhotoById);
+router.get('/', getPhotos);
+router.get('/my', protect, getMyPhotos);
+router.get('/:id', getPhotoById);
 router.put('/:id', protect, updatePhoto);
 router.delete('/:id', protect, deletePhoto);
 
