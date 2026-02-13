@@ -1,6 +1,6 @@
   # FrontX – Photo Gallery Platform
 
-FrontX is a web application for storing and viewing images with album support and JWT-based authentication. Users can register, log in, create albums, upload images, filter by albums, and view only their own photos.[web:92][web:95]
+FrontX is a web application for storing and viewing images with album support and JWT-based authentication. Users can register, log in, create albums, upload images, filter by albums, and view only their own photos.
 
 ---
 
@@ -37,7 +37,7 @@ bash
 npm run dev
 # or
 npm start
-The API will be available at http://localhost:5000/api by default.[web:95]
+The API will be available at http://localhost:5000/api by default.
 
 4. Frontend setup
 Go to the frontend folder (for example frontend/):
@@ -66,13 +66,13 @@ git push
 
  Project overview
 Features
-User registration and login with password hashing and JWT.[cite:2][web:95]
+User registration and login with password hashing and JWT.
 
-Protected routes via protect middleware that decodes the token and attaches req.user.[cite:16]
+Protected routes via protect middleware that decodes the token and attaches req.user.
 
-Full CRUD for albums (create, read, update, delete).[cite:18]
+Full CRUD for albums (create, read, update, delete).
 
-Full CRUD for photos linked to users and albums.[cite:8][cite:13]
+Full CRUD for photos linked to users and albums.
 
 Image filtering:
 
@@ -82,12 +82,12 @@ My Images – only images created by the logged-in user (filtered by userId).
 
 Filter by specific album.
 
-Only the owner (or admin) can delete or update their photos.[cite:8]
+Only the owner (or admin) can delete or update their photos.
 
 Tech stack
-Frontend: React, TypeScript, Tailwind CSS, shadcn/ui, lucide-react, react-responsive-masonry.[web:87]
+Frontend: React, TypeScript, Tailwind CSS, shadcn/ui, lucide-react, react-responsive-masonry.
 
-Backend: Node.js, Express, MongoDB, Mongoose, JSON Web Tokens, bcrypt.[web:95]
+Backend: Node.js, Express, MongoDB, Mongoose, JSON Web Tokens, bcrypt.
 
 Deployment: Render for API + any static hosting for the frontend.
 
@@ -182,7 +182,7 @@ json
   }
 }
 Photos
-Photo model fields:[cite:8]
+Photo model fields:
 
 title: string
 
@@ -230,7 +230,7 @@ json
   "updatedAt": "..."
 }
 GET /api/photos
-Public list of all photos, sorted by createdAt (newest first), with userId populated to include the author's username.[cite:13]
+Public list of all photos, sorted by createdAt (newest first), with userId populated to include the author's username.
 
 Response (single item example):
 
@@ -253,7 +253,7 @@ List photos created by the currently logged-in user.
 
 Headers: Authorization: Bearer <jwt-token>
 
-Response: array of photos where userId === req.user._id.[cite:13]
+Response: array of photos where userId === req.user._id.
 
 GET /api/photos/:id
 Get a single photo by ID (public).
@@ -262,7 +262,7 @@ PUT /api/photos/:id (protected)
 Update a photo; only the owner or an admin can modify it.
 
 DELETE /api/photos/:id (protected)
-Delete a photo; only the owner or an admin can delete it.[cite:8]
+Delete a photo; only the owner or an admin can delete it.
 
 Albums
 Album model fields:
@@ -296,7 +296,7 @@ DELETE /api/albums/:id (protected)
 Delete an album.
 
 🖼 Screenshots & features
-Replace the image paths with real files in your repository (for example docs/screens/home-gallery.png).[web:96]
+Replace the image paths with real files in your repository (for example docs/screens/home-gallery.png).
 
 1. Home page / Gallery
 Home Gallery
@@ -343,7 +343,7 @@ On successful login, the app stores token, currentUser, and currentUserId in loc
 After login, the user is redirected to the gallery.
 
  Possible improvements
-Direct file uploads (input type="file" + Cloudinary/S3 backend).[web:92]
+Direct file uploads (input type="file" + Cloudinary/S3 backend).
 
 Likes, comments, and public/private albums.
 
