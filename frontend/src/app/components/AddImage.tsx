@@ -5,8 +5,7 @@ import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Upload, CheckCircle, Image as ImageIcon, Link, X } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Upload, CheckCircle, Link } from 'lucide-react';
 import { albumsAPI, photosAPI } from '../../services/api';
 
 interface Album {
@@ -28,9 +27,6 @@ export function AddImage({ username }: AddImageProps) {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
-  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('file');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     loadAlbums();
@@ -47,112 +43,55 @@ export function AddImage({ username }: AddImageProps) {
   };
 
   useEffect(() => {
-    if (uploadMethod === 'url' && url) {
+    if (url) {
       const timer = setTimeout(() => {
         setPreviewUrl(url);
       }, 500);
       return () => clearTimeout(timer);
+    } else {
+      setPreviewUrl('');
     }
-  }, [url, uploadMethod]);
-
-  const handleFileSelect = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB');
-      return;
-    }
-
-    setSelectedFile(file);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-
-    if (!title) {
-      const fileName = file.name.replace(/\.[^/.]+$/, '');
-      setTitle(fileName);
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  };
-
-  const handleRemoveFile = () => {
-    setSelectedFile(null);
-    setPreviewUrl('');
-  };
+  }, [url]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!title) {
-    alert('Please enter a title');
-    return;
-  }
+    if (!title) {
+      alert('Please enter a title');
+      return;
+    }
 
-  if (!url) {
-    alert('Please enter an image URL');
-    return;
-  }
+    if (!url) {
+      alert('Please enter an image URL');
+      return;
+    }
 
-  if (!albumId) {
-    alert('Please select an album');
-    return;
-  }
+    if (!albumId || albumId === 'none') {
+      alert('Please select an album');
+      return;
+    }
 
-  try {
-    await photosAPI.create({
-      title,
-      description,
-      imageUrl: url,      // <‑ только URL, без base64
-      albumId,
-    });
+    try {
+      await photosAPI.create({
+        title,
+        description,
+        imageUrl: url, // только URL
+        albumId,
+      });
 
-    setShowSuccess(true);
-    setUrl('');
-    setTitle('');
-    setDescription('');
-    setAlbumId('');
-    setPreviewUrl('');
-    setSelectedFile(null);
+      setShowSuccess(true);
+      setUrl('');
+      setTitle('');
+      setDescription('');
+      setAlbumId('');
+      setPreviewUrl('');
 
-    setTimeout(() => setShowSuccess(false), 3000);
-  } catch (err: any) {
-    console.error(err);
-    alert(err.message || 'Failed to upload image');
-  }
-};
-
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || 'Failed to upload image');
+    }
+  };
 
   return (
     <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 py-12 px-4">
@@ -175,81 +114,22 @@ export function AddImage({ username }: AddImageProps) {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Upload Method Tabs */}
-                <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'url' | 'file')}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="file">Upload File</TabsTrigger>
-                    <TabsTrigger value="url">From URL</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="file" className="space-y-4 mt-4">
-                    {!selectedFile ? (
-                      <div
-                        className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer ${
-                          isDragging
-                            ? 'border-purple-500 bg-purple-50'
-                            : 'border-gray-300 hover:border-purple-400 hover:bg-purple-50/50'
-                        }`}
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                        onClick={() => document.getElementById('file-input')?.click()}
-                      >
-                        <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                        <p className="text-gray-700 mb-2">
-                          <span className="font-medium text-purple-600">Click to upload</span> or drag and drop
-                        </p>
-                        <p className="text-sm text-gray-500">PNG, JPG, GIF up to 5MB</p>
-                        <input
-                          id="file-input"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                          className="hidden"
-                        />
-                      </div>
-                    ) : (
-                      <div className="border-2 border-green-200 bg-green-50 rounded-xl p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                              <ImageIcon className="w-6 h-6 text-green-600" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-gray-900">{selectedFile.name}</p>
-                              <p className="text-sm text-gray-500">
-                                {(selectedFile.size / 1024).toFixed(2)} KB
-                              </p>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={handleRemoveFile}
-                            className="w-8 h-8 bg-white hover:bg-red-50 rounded-full flex items-center justify-center transition-colors"
-                          >
-                            <X className="w-4 h-4 text-red-600" />
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  <TabsContent value="url" className="space-y-2 mt-4">
-                    <Label htmlFor="url">Image URL</Label>
-                    <div className="relative">
-                      <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        id="url"
-                        type="url"
-                        placeholder="https://example.com/image.jpg"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                        className="h-11 pl-10"
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500">Paste a direct link to your image</p>
-                  </TabsContent>
-                </Tabs>
+                {/* URL input (вместо вкладок) */}
+                <div className="space-y-2">
+                  <Label htmlFor="url">Image URL</Label>
+                  <div className="relative">
+                    <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="url"
+                      type="url"
+                      placeholder="https://example.com/image.jpg"
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="h-11 pl-10"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">Paste a direct link to your image</p>
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="imageTitle">Title *</Label>
@@ -262,6 +142,7 @@ export function AddImage({ username }: AddImageProps) {
                     className="h-11"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="imageDescription">Description</Label>
                   <Textarea
@@ -273,6 +154,7 @@ export function AddImage({ username }: AddImageProps) {
                     className="resize-none"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="album">Album (Optional)</Label>
                   <Select value={albumId} onValueChange={setAlbumId}>
@@ -308,8 +190,38 @@ export function AddImage({ username }: AddImageProps) {
             </CardContent>
           </Card>
 
-          {/* Preview Section — твой старый код, без изменений */}
-          {/* ... оставь блок Preview таким же, как был ... */}
+          {/* Preview Section — полный блок */}
+          <Card className="border-0 shadow-xl">
+            <CardHeader>
+              <CardTitle>Preview</CardTitle>
+              <CardDescription>See how your image will look</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="border rounded-xl overflow-hidden bg-white">
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt={title || 'Preview'}
+                    className="w-full h-64 object-cover"
+                    onError={() => setPreviewUrl('')}
+                  />
+                ) : (
+                  <div className="h-64 flex items-center justify-center text-gray-400">
+                    No preview available
+                  </div>
+                )}
+                <div className="p-4">
+                  <h3 className="font-semibold mb-1">{title || 'Image title'}</h3>
+                  <p className="text-sm text-gray-500 mb-2">
+                    {description || 'Image description will appear here.'}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {albumId ? 'Assigned to selected album.' : 'No album selected.'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
