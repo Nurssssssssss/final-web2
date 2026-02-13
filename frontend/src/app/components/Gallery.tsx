@@ -13,6 +13,7 @@ interface Image {
   title: string;
   description: string;
   username: string;
+  userId: string;              // ← добавили
   albumId: string | null;
   createdAt: string;
 }
@@ -31,11 +32,14 @@ export function Gallery() {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [selectedAlbum, setSelectedAlbum] = useState<string>('all');
   const [currentUser, setCurrentUser] = useState<string>('');
+  const [currentUserId, setCurrentUserId] = useState<string>(''); // ← добавили
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const user = localStorage.getItem('currentUser') || '';
+    const userId = localStorage.getItem('currentUserId') || '';   // ← читаем id
     setCurrentUser(user);
+    setCurrentUserId(userId);
     loadData();
   }, []);
 
@@ -53,6 +57,7 @@ export function Gallery() {
         title: p.title,
         description: p.description || '',
         username: p.username || 'Unknown',
+        userId: p.userId,                 // ← сохраняем userId
         albumId: p.albumId || null,
         createdAt: p.createdAt,
       }));
@@ -81,10 +86,11 @@ export function Gallery() {
   const filteredImages = useMemo(() => {
     if (selectedAlbum === 'all') return images;
     if (selectedAlbum === 'my-images') {
-      return images.filter((img) => img.username === currentUser);
+      // фильтруем по userId, а не по username
+      return images.filter((img) => img.userId === currentUserId);
     }
     return images.filter((img) => img.albumId === selectedAlbum);
-  }, [images, selectedAlbum, currentUser]);
+  }, [images, selectedAlbum, currentUserId]);
 
   const handleImageClick = (image: Image) => {
     setSelectedImage(image);
@@ -212,7 +218,7 @@ export function Gallery() {
                   />
 
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity	duration-300 p-4 flex flex-col justify-end">
                     <h3 className="text-white text-lg mb-2 line-clamp-2">{image.title}</h3>
                     <div className="flex items-center gap-2">
                       <Avatar className="w-6 h-6 border border-white/50">
@@ -290,7 +296,7 @@ export function Gallery() {
                       )}
                     </div>
 
-                    {selectedImage.username === currentUser && (
+                    {selectedImage.userId === currentUserId && (
                       <div className="pt-4 border-t">
                         <Button
                           variant="destructive"

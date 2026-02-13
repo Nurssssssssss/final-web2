@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { ImageIcon } from 'lucide-react';
-import { authAPI, userAPI } from '../../services/api';
+import { authAPI } from '../../services/api';
 
 interface AuthProps {
   onLogin: (username: string) => void;
@@ -30,22 +30,31 @@ export function Auth({ onLogin }: AuthProps) {
       if (isLogin) {
         // 🔹 ЛОГИН
         const res = await authAPI.login({ email, password });
-        // токен уже сохраняется в authAPI.login
-        // получаем профиль пользователя, чтобы узнать username
-        const profile = await userAPI.getProfile();
-        const name = profile.user?.username || username || email;
+        // authAPI.login уже сохранил token в localStorage
 
+        const name = res.user?.username || username || email;
+        const userId = res.user?._id;
+
+        if (userId) {
+          localStorage.setItem('currentUserId', userId);
+        }
         localStorage.setItem('currentUser', name);
+
         onLogin(name);
       } else {
         // 🔹 РЕГИСТРАЦИЯ
         await authAPI.register({ username, email, password });
         // после успешной регистрации сразу логиним
         const res = await authAPI.login({ email, password });
-        const profile = await userAPI.getProfile();
-        const name = profile.user?.username || username;
 
+        const name = res.user?.username || username || email;
+        const userId = res.user?._id;
+
+        if (userId) {
+          localStorage.setItem('currentUserId', userId);
+        }
         localStorage.setItem('currentUser', name);
+
         onLogin(name);
       }
     } catch (err: any) {
