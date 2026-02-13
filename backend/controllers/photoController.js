@@ -9,7 +9,7 @@ exports.createPhoto = async (req, res) => {
       imageUrl: req.body.imageUrl,
       albumId: req.body.albumId,
       userId: req.user._id,
-      username: req.user.username, // сохраняем имя автора
+      username: req.user.username, // сохраняем имя автора (на всякий случай)
     });
 
     res.status(201).json(photo);
@@ -21,7 +21,10 @@ exports.createPhoto = async (req, res) => {
 // ✅ ПУБЛИЧНО: получить ВСЕ фото (All Images)
 exports.getPhotos = async (req, res) => {
   try {
-    const photos = await Photo.find().sort({ createdAt: -1 });
+    const photos = await Photo.find()
+      .sort({ createdAt: -1 })
+      .populate('userId', 'username');
+
     res.json(photos);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -31,7 +34,10 @@ exports.getPhotos = async (req, res) => {
 // ✅ ПРИВАТНО: получить фото текущего пользователя (My Images)
 exports.getMyPhotos = async (req, res) => {
   try {
-    const photos = await Photo.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const photos = await Photo.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .populate('userId', 'username');
+
     res.json(photos);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -41,7 +47,7 @@ exports.getMyPhotos = async (req, res) => {
 // ✅ ПУБЛИЧНО: получить фото по ID (просмотр всем)
 exports.getPhotoById = async (req, res) => {
   try {
-    const photo = await Photo.findById(req.params.id);
+    const photo = await Photo.findById(req.params.id).populate('userId', 'username');
     if (!photo) return res.status(404).json({ message: 'Фото не найдено' });
 
     res.json(photo);
@@ -56,7 +62,6 @@ exports.updatePhoto = async (req, res) => {
     const photo = await Photo.findById(req.params.id);
     if (!photo) return res.status(404).json({ message: 'Фото не найдено' });
 
-    // доступ
     if (
       photo.userId.toString() !== req.user._id.toString() &&
       req.user.role !== 'admin'
@@ -64,11 +69,14 @@ exports.updatePhoto = async (req, res) => {
       return res.status(403).json({ message: 'Нет прав доступа' });
     }
 
-    // корректные fallback-значения
-    photo.title = req.body.title ?? photo.title;
-    photo.description = req.body.description ?? photo.description;
-    photo.imageUrl = req.body.imageUrl ?? photo.imageUrl;
-    photo.albumId = req.body.albumId ?? photo.albumId;
+    // без nullish coalescing, максимально совместимо
+    photo.title = req.body.title !== undefined ? req.body.title : photo.title;
+    photo.description =
+      req.body.description !== undefined ? req.body.description : photo.description;
+    photo.imageUrl =
+      req.body.imageUrl !== undefined ? req.body.imageUrl : photo.imageUrl;
+    photo.albumId =
+      req.body.albumId !== undefined ? req.body.albumId : photo.albumId;
 
     await photo.save();
     res.json(photo);
@@ -90,7 +98,7 @@ exports.deletePhoto = async (req, res) => {
       return res.status(403).json({ message: 'Нет прав доступа' });
     }
 
-    await photo.deleteOne();
+    await photo.deleteOne(); // корректный метод mongoose[web:24][web:69]
     res.status(200).json({ message: 'Фото удалено' });
   } catch (error) {
     res.status(500).json({ message: error.message });
