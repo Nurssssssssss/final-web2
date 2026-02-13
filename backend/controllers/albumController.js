@@ -57,15 +57,21 @@ exports.updateAlbum = async (req, res) => {
 
 // Удалить альбом
 exports.deleteAlbum = async (req, res) => {
-    try {
-        const album = await Album.findById(req.params.id);
-        if (!album) return res.status(404).json({ message: 'Альбом не найден' });
-        if (album.userId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-            return res.status(403).json({ message: 'Нет прав доступа' });
-        }
-        await album.remove();
-        res.json({ message: 'Альбом удалён' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  try {
+    const album = await Album.findById(req.params.id);
+    if (!album) return res.status(404).json({ message: 'Альбом не найден' });
+
+    if (
+      album.userId.toString() !== req.user._id.toString() &&
+      req.user.role !== 'admin'
+    ) {
+      return res.status(403).json({ message: 'Нет прав доступа' });
     }
+
+    await album.deleteOne(); // ← вот эта строка вместо remove
+    res.json({ message: 'Альбом удалён' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+

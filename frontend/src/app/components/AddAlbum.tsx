@@ -32,14 +32,13 @@ export function AddAlbum({ username }: AddAlbumProps) {
   const loadUserAlbums = async () => {
     try {
       const albums: Album[] = await albumsAPI.getAll();
-      // сортируем по дате
       const sorted = albums.sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       setUserAlbums(sorted);
     } catch (err: any) {
-      console.error(err);
+      console.error('Failed to load albums:', err);
       alert(err.message || 'Failed to load albums');
     }
   };
@@ -61,7 +60,7 @@ export function AddAlbum({ username }: AddAlbumProps) {
 
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err: any) {
-      console.error(err);
+      console.error('Failed to create album:', err);
       alert(err.message || 'Failed to create album');
     }
   };
@@ -79,13 +78,12 @@ export function AddAlbum({ username }: AddAlbumProps) {
       await albumsAPI.delete(albumId);
       await loadUserAlbums();
     } catch (err: any) {
-      console.error(err);
+      console.error('Failed to delete album:', err);
       alert(err.message || 'Failed to delete album');
     }
   };
 
-
-  // временно оставим заглушку, пока AddImage не переведём на API
+  // временно заглушка — пока AddImage не переведён на API
   const getImageCount = (albumId: string) => {
     return 0;
   };
@@ -107,7 +105,9 @@ export function AddAlbum({ username }: AddAlbumProps) {
           <Card className="border-0 shadow-xl">
             <CardHeader className="space-y-1">
               <CardTitle>Album Details</CardTitle>
-              <CardDescription>Give your album a name and description</CardDescription>
+              <CardDescription>
+                Give your album a name and description
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -137,7 +137,9 @@ export function AddAlbum({ username }: AddAlbumProps) {
                 {showSuccess && (
                   <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
                     <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span className="text-green-800">Album created successfully!</span>
+                    <span className="text-green-800">
+                      Album created successfully!
+                    </span>
                   </div>
                 )}
 
@@ -157,7 +159,8 @@ export function AddAlbum({ username }: AddAlbumProps) {
             <CardHeader className="space-y-1">
               <CardTitle>Your Albums</CardTitle>
               <CardDescription>
-                {userAlbums.length} {userAlbums.length === 1 ? 'album' : 'albums'}
+                {userAlbums.length}{' '}
+                {userAlbums.length === 1 ? 'album' : 'albums'}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -165,7 +168,9 @@ export function AddAlbum({ username }: AddAlbumProps) {
                 <div className="text-center py-8">
                   <FolderOpen className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                   <p className="text-gray-500 text-sm">No albums yet</p>
-                  <p className="text-gray-400 text-xs">Create your first album</p>
+                  <p className="text-gray-400 text-xs">
+                    Create your first album
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
@@ -178,7 +183,9 @@ export function AddAlbum({ username }: AddAlbumProps) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <FolderOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
-                            <h3 className="font-medium truncate">{album.title}</h3>
+                            <h3 className="font-medium truncate">
+                              {album.title}
+                            </h3>
                           </div>
                           {album.description && (
                             <p className="text-sm text-gray-600 line-clamp-2 mb-2">
