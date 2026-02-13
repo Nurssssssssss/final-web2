@@ -44,7 +44,7 @@ export function Gallery() {
     try {
       const [allImagesFromApi, allAlbumsFromApi] = await Promise.all([
         photosAPI.getAll(),
-        albumsAPI.getAll()
+        albumsAPI.getAll(),
       ]);
 
       const normalizedImages: Image[] = allImagesFromApi.map((p: any) => ({
@@ -80,7 +80,9 @@ export function Gallery() {
 
   const filteredImages = useMemo(() => {
     if (selectedAlbum === 'all') return images;
-    if (selectedAlbum === 'my-images') return images.filter((img) => img.username === currentUser);
+    if (selectedAlbum === 'my-images') {
+      return images.filter((img) => img.username === currentUser);
+    }
     return images.filter((img) => img.albumId === selectedAlbum);
   }, [images, selectedAlbum, currentUser]);
 
@@ -232,7 +234,7 @@ export function Gallery() {
           <DialogContent className="max-w-5xl max-h-[90vh] p-0 overflow-hidden bg-transparent border-0">
             {selectedImage && (
               <div className="grid md:grid-cols-[1fr_400px] bg-white rounded-2xl overflow-hidden shadow-2xl max-h-[90vh]">
-                <div className="relative bg-black flex items-center justify-center">
+                <div className="relative bg-black flex itemsCentered justify-center">
                   <img
                     src={selectedImage.url}
                     alt={selectedImage.title}
@@ -269,7 +271,9 @@ export function Gallery() {
                     <div>
                       <h2 className="text-2xl mb-3">{selectedImage.title}</h2>
                       {selectedImage.description && (
-                        <p className="text-gray-600 leading-relaxed">{selectedImage.description}</p>
+                        <p className="text-gray-600 leading-relaxed">
+                          {selectedImage.description}
+                        </p>
                       )}
                     </div>
 

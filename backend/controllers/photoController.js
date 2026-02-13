@@ -9,6 +9,7 @@ exports.createPhoto = async (req, res) => {
       imageUrl: req.body.imageUrl,
       albumId: req.body.albumId,
       userId: req.user._id,
+      username: req.user.username, // сохраняем имя автора
     });
 
     res.status(201).json(photo);
@@ -38,7 +39,6 @@ exports.getMyPhotos = async (req, res) => {
 };
 
 // ✅ ПУБЛИЧНО: получить фото по ID (просмотр всем)
-// (если хочешь скрыть часть полей — скажи)
 exports.getPhotoById = async (req, res) => {
   try {
     const photo = await Photo.findById(req.params.id);
@@ -64,7 +64,7 @@ exports.updatePhoto = async (req, res) => {
       return res.status(403).json({ message: 'Нет прав доступа' });
     }
 
-    // ✅ исправлено: корректные fallback-значения
+    // корректные fallback-значения
     photo.title = req.body.title ?? photo.title;
     photo.description = req.body.description ?? photo.description;
     photo.imageUrl = req.body.imageUrl ?? photo.imageUrl;
