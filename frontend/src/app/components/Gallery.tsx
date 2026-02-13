@@ -86,6 +86,14 @@ export function Gallery() {
   const filteredImages = useMemo(() => {
     if (selectedAlbum === 'all') return images;
     if (selectedAlbum === 'my-images') {
+      console.log('DEBUG my-images', {
+        currentUserId,
+        images: images.map((img) => ({
+          id: img.id,
+          userId: img.userId,
+          username: img.username,
+        })),
+      });
       return images.filter((img) => img.userId === currentUserId);
     }
     return images.filter((img) => img.albumId === selectedAlbum);
@@ -139,9 +147,9 @@ export function Gallery() {
 
   if (images.length === 0) {
     return (
-      <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br	from-purple-50 via-blue-50 to-pink-50">
+      <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br  from-purple-50 via-blue-50 to-pink-50">
         <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-          <div className="inline-flex	items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-200 to-blue-200 rounded-3xl mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-200 to-blue-200 rounded-3xl mb-6">
             <FolderOpen className="w-10 h-10 text-purple-600" />
           </div>
           <h2 className="text-2xl text-gray-700 mb-3">No images yet</h2>
@@ -194,7 +202,7 @@ export function Gallery() {
         {/* Images */}
         {filteredImages.length === 0 ? (
           <div className="text-center py-20 text-gray-500 text-lg">
-            No images found	with this filter
+            No images found with this filter
           </div>
         ) : (
           <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3, 1200: 4 }}>
@@ -260,7 +268,7 @@ export function Gallery() {
                 <div className="bg-white overflow-y-auto">
                   <div className="p-6 space-y-6">
                     <div className="flex items-center justify-between">
-                      <div className="flex	items-center gap-3">
+                      <div className="flex  items-center gap-3">
                         <Avatar className="w-12 h-12 border-2 border-purple-200">
                           <AvatarFallback className="bg-gradient-to-br from-purple-600 to-blue-600 text-white">
                             {selectedImage.username.charAt(0).toUpperCase()}
