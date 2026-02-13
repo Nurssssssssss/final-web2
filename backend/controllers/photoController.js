@@ -1,6 +1,6 @@
 const Photo = require('../models/Photo');
 
-// Создать фото (только auth через router protect)
+
 exports.createPhoto = async (req, res) => {
   try {
     const photo = await Photo.create({
@@ -9,7 +9,7 @@ exports.createPhoto = async (req, res) => {
       imageUrl: req.body.imageUrl,
       albumId: req.body.albumId,
       userId: req.user._id,
-      username: req.user.username, // сохраняем имя автора (на всякий случай)
+      username: req.user.username, 
     });
 
     res.status(201).json(photo);
@@ -18,7 +18,7 @@ exports.createPhoto = async (req, res) => {
   }
 };
 
-// ✅ ПУБЛИЧНО: получить ВСЕ фото (All Images)
+
 exports.getPhotos = async (req, res) => {
   try {
     const photos = await Photo.find()
@@ -31,7 +31,7 @@ exports.getPhotos = async (req, res) => {
   }
 };
 
-// ✅ ПРИВАТНО: получить фото текущего пользователя (My Images)
+
 exports.getMyPhotos = async (req, res) => {
   try {
     const photos = await Photo.find({ userId: req.user._id })
@@ -44,7 +44,7 @@ exports.getMyPhotos = async (req, res) => {
   }
 };
 
-// ✅ ПУБЛИЧНО: получить фото по ID (просмотр всем)
+
 exports.getPhotoById = async (req, res) => {
   try {
     const photo = await Photo.findById(req.params.id).populate('userId', 'username');
@@ -56,7 +56,7 @@ exports.getPhotoById = async (req, res) => {
   }
 };
 
-// Обновить фото (только владелец или admin) — router protect обязателен
+
 exports.updatePhoto = async (req, res) => {
   try {
     const photo = await Photo.findById(req.params.id);
@@ -69,7 +69,7 @@ exports.updatePhoto = async (req, res) => {
       return res.status(403).json({ message: 'Нет прав доступа' });
     }
 
-    // без nullish coalescing, максимально совместимо
+    
     photo.title = req.body.title !== undefined ? req.body.title : photo.title;
     photo.description =
       req.body.description !== undefined ? req.body.description : photo.description;
@@ -85,7 +85,7 @@ exports.updatePhoto = async (req, res) => {
   }
 };
 
-// Удалить фото (только владелец или admin) — router protect обязателен
+
 exports.deletePhoto = async (req, res) => {
   try {
     const photo = await Photo.findById(req.params.id);
@@ -98,7 +98,7 @@ exports.deletePhoto = async (req, res) => {
       return res.status(403).json({ message: 'Нет прав доступа' });
     }
 
-    await photo.deleteOne(); // корректный метод mongoose[web:24][web:69]
+    await photo.deleteOne();
     res.status(200).json({ message: 'Фото удалено' });
   } catch (error) {
     res.status(500).json({ message: error.message });

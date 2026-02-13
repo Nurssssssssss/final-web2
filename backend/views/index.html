@@ -13,7 +13,7 @@
 <body>
     <h1>Photography Portfolio</h1>
 
-    <!-- Регистрация -->
+    
     <div id="registerDiv">
         <h2>Register</h2>
         <input type="text" id="regUsername" placeholder="Username">
@@ -22,7 +22,7 @@
         <button onclick="register()">Register</button>
     </div>
 
-    <!-- Логин -->
+    
     <div id="loginDiv">
         <h2>Login</h2>
         <input type="email" id="loginEmail" placeholder="Email">
@@ -30,7 +30,7 @@
         <button onclick="login()">Login</button>
     </div>
 
-    <!-- Профиль и альбомы -->
+    
     <div id="profileDiv" class="hidden">
         <h2>Profile</h2>
         <div id="profileInfo"></div>
@@ -49,10 +49,10 @@
 <script>
 let token = null;
 
-// API URL
+
 const API_URL = "http://localhost:5000/api";
 
-// Регистрация
+
 async function register() {
     const username = document.getElementById('regUsername').value;
     const email = document.getElementById('regEmail').value;
@@ -67,7 +67,7 @@ async function register() {
     alert(data.message);
 }
 
-// Логин
+
 async function login() {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
@@ -90,7 +90,7 @@ async function login() {
     }
 }
 
-// Профиль
+
 async function loadProfile() {
     const res = await fetch(`${API_URL}/users/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -103,7 +103,7 @@ async function loadProfile() {
     `;
 }
 
-// Создать альбом
+
 async function createAlbum() {
     const title = document.getElementById('albumTitle').value;
     const description = document.getElementById('albumDesc').value;
@@ -121,7 +121,7 @@ async function createAlbum() {
     loadAlbums();
 }
 
-// Загрузить альбомы
+
 async function loadAlbums() {
     const res = await fetch(`${API_URL}/albums`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -136,7 +136,7 @@ async function loadAlbums() {
     });
 }
 
-// Выход
+
 function logout() {
     token = null;
     document.getElementById('loginDiv').classList.remove('hidden');

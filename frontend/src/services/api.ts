@@ -53,7 +53,7 @@ export const authAPI = {
   },
 };
 
-// Albums API
+
 export const albumsAPI = {
   getAll: () => apiCall('/albums'),
   
@@ -77,7 +77,7 @@ export const albumsAPI = {
     }),
 };
 
-// Photos API
+
 export const photosAPI = {
   getAll: () => apiCall('/photos'),
   getById: (id: string) => apiCall(`/photos/${id}`),
@@ -98,7 +98,7 @@ export const photosAPI = {
 };
 
 
-// User API
+
 export const userAPI = {
   getProfile: () => apiCall('/users/profile'),
 };

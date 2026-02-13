@@ -18,4 +18,4 @@ const protect = async (req, res, next) => {
     }
 };
 
-module.exports = { protect }; // экспортируем объект с ключом protect
+module.exports = { protect }; 

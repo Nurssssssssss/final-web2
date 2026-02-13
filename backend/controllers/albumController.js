@@ -68,7 +68,7 @@ exports.deleteAlbum = async (req, res) => {
       return res.status(403).json({ message: 'Нет прав доступа' });
     }
 
-    await album.deleteOne(); // ← вот эта строка вместо remove
+    await album.deleteOne();
     res.json({ message: 'Альбом удалён' });
   } catch (error) {
     res.status(500).json({ message: error.message });
