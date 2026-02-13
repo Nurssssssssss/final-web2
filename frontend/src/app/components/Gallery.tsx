@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import { Dialog, DialogContent } from './ui/dialog';
-import { X, Heart, Calendar, FolderOpen, Filter, Trash2 } from 'lucide-react';
+import { X, Calendar, FolderOpen, Filter, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Button } from './ui/button';
@@ -105,11 +105,6 @@ export function Gallery() {
       console.error(err);
       alert(err.message || 'Failed to delete image');
     }
-  };
-
-  const handleLike = (imageId: string) => {
-    console.log('Liked image', imageId);
-    // сюда можно добавить API лайка
   };
 
   const formatDate = (dateString: string) => {
@@ -226,17 +221,6 @@ export function Gallery() {
                       <span className="text-white/90 text-sm">{image.username}</span>
                     </div>
                   </div>
-
-                  {/* Favorite button */}
-                  <button
-                    className="absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLike(image.id);
-                    }}
-                  >
-                    <Heart className="w-5 h-5 text-gray-700" />
-                  </button>
                 </div>
               ))}
             </Masonry>
@@ -280,12 +264,6 @@ export function Gallery() {
                           <p className="text-sm text-gray-500">Creator</p>
                         </div>
                       </div>
-                      <button
-                        className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
-                        onClick={() => handleLike(selectedImage.id)}
-                      >
-                        <Heart className="w-5 h-5 text-gray-700" />
-                      </button>
                     </div>
 
                     <div>
