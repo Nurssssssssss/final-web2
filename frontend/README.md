@@ -1,29 +1,10 @@
-
-  # Простой сайт как Пинтерест
-
-  This is a code bundle for Простой сайт как Пинтерест. The original project is available at https://www.figma.com/design/jWHftR7SDzbkWa8e3DyZdW/%D0%9F%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D1%81%D0%B0%D0%B9%D1%82-%D0%BA%D0%B0%D0%BA-%D0%9F%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%82.
-
-  ## Running the code
-
-  Run `npm i` to install the dependencies.
-
-  Run `npm run dev` to start the development server.
-
-
-
-
-
-
-
-
-
   # FrontX – Photo Gallery Platform
 
 FrontX is a web application for storing and viewing images with album support and JWT-based authentication. Users can register, log in, create albums, upload images, filter by albums, and view only their own photos.[web:92][web:95]
 
 ---
 
-## 🔧 Set up instructions
+## Set up instructions
 
 ### 1. Prerequisites
 
@@ -83,7 +64,7 @@ git commit -m "update frontend gallery and backend photo controller"
 
 git push
 
-💡 Project overview
+ Project overview
 Features
 User registration and login with password hashing and JWT.[cite:2][web:95]
 
@@ -110,7 +91,7 @@ Backend: Node.js, Express, MongoDB, Mongoose, JSON Web Tokens, bcrypt.[web:95]
 
 Deployment: Render for API + any static hosting for the frontend.
 
-📡 API documentation
+ API documentation
 Base API URL:
 
 Local: http://localhost:5000/api
@@ -319,6 +300,7 @@ Replace the image paths with real files in your repository (for example docs/scr
 
 1. Home page / Gallery
 Home Gallery
+![photo_1_2026-02-13_16-48-05](https://github.com/user-attachments/assets/ac7c6fc5-d29d-426f-8dba-5e273084d4f1)
 
 
 Displays all images in a responsive masonry grid.
