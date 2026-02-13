@@ -4,7 +4,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Label } from './ui/label';
-import { FolderPlus, CheckCircle, Trash2, FolderOpen } from 'lucide-react';
+import { FolderPlus, CheckCircle, Trash2, FolderOpen, Pencil, X, Save } from 'lucide-react';
 import { albumsAPI } from '../../services/api';
 
 interface Album {
@@ -24,6 +24,9 @@ export function AddAlbum({ username }: AddAlbumProps) {
   const [description, setDescription] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [userAlbums, setUserAlbums] = useState<Album[]>([]);
+  const [editingAlbumId, setEditingAlbumId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
 
   useEffect(() => {
     loadUserAlbums();
@@ -33,8 +36,7 @@ export function AddAlbum({ username }: AddAlbumProps) {
     try {
       const albums: Album[] = await albumsAPI.getAll();
       const sorted = albums.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       setUserAlbums(sorted);
     } catch (err: any) {
@@ -83,7 +85,38 @@ export function AddAlbum({ username }: AddAlbumProps) {
     }
   };
 
-  // временно заглушка — пока AddImage не переведён на API
+  const startEditAlbum = (album: Album) => {
+    setEditingAlbumId(album._id);
+    setEditTitle(album.title);
+    setEditDescription(album.description || '');
+  };
+
+  const cancelEditAlbum = () => {
+    setEditingAlbumId(null);
+    setEditTitle('');
+    setEditDescription('');
+  };
+
+  const handleUpdateAlbum = async (albumId: string) => {
+    if (!editTitle) {
+      alert('Please enter album title');
+      return;
+    }
+
+    try {
+      await albumsAPI.update(albumId, {
+        title: editTitle,
+        description: editDescription,
+      });
+      await loadUserAlbums();
+      cancelEditAlbum();
+    } catch (err: any) {
+      console.error('Failed to update album:', err);
+      alert(err.message || 'Failed to update album');
+    }
+  };
+
+  // временная заглушка — пока AddImage не переведён на API
   const getImageCount = (albumId: string) => {
     return 0;
   };
@@ -174,40 +207,103 @@ export function AddAlbum({ username }: AddAlbumProps) {
                 </div>
               ) : (
                 <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                  {userAlbums.map((album) => (
-                    <div
-                      key={album._id}
-                      className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl hover:shadow-md transition-shadow group"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <FolderOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
-                            <h3 className="font-medium truncate">
-                              {album.title}
-                            </h3>
-                          </div>
-                          {album.description && (
-                            <p className="text-sm text-gray-600 line-clamp-2 mb-2">
-                              {album.description}
+                  {userAlbums.map((album) => {
+                    const isEditing = editingAlbumId === album._id;
+
+                    return (
+                      <div
+                        key={album._id}
+                        className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl hover:shadow-md transition-shadow group"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            {isEditing ? (
+                              <div className="space-y-2">
+                                <Input
+                                  value={editTitle}
+                                  onChange={(e) => setEditTitle(e.target.value)}
+                                  className="h-9"
+                                />
+                                <Textarea
+                                  value={editDescription}
+                                  onChange={(e) =>
+                                    setEditDescription(e.target.value)
+                                  }
+                                  rows={3}
+                                  className="resize-none text-sm"
+                                />
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <FolderOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                                  <h3 className="font-medium truncate">
+                                    {album.title}
+                                  </h3>
+                                </div>
+                                {album.description && (
+                                  <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                                    {album.description}
+                                  </p>
+                                )}
+                              </>
+                            )}
+                            <p className="text-xs text-gray-500 mt-1">
+                              {getImageCount(album._id)}{' '}
+                              {getImageCount(album._id) === 1
+                                ? 'image'
+                                : 'images'}
                             </p>
-                          )}
-                          <p className="text-xs text-gray-500">
-                            {getImageCount(album._id)}{' '}
-                            {getImageCount(album._id) === 1 ? 'image' : 'images'}
-                          </p>
+                          </div>
+
+                          <div className="flex flex-col items-end gap-2">
+                            {isEditing ? (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-green-600 hover:bg-green-50"
+                                  onClick={() => handleUpdateAlbum(album._id)}
+                                >
+                                  <Save className="w-4 h-4 mr-1" />
+                                  Save
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-gray-500 hover:bg-gray-50"
+                                  onClick={cancelEditAlbum}
+                                >
+                                  <X className="w-4 h-4 mr-1" />
+                                  Cancel
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-purple-50 hover:text-purple-600"
+                                  onClick={() => startEditAlbum(album)}
+                                >
+                                  <Pencil className="w-4 h-4 mr-1" />
+                                  Edit
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600"
+                                  onClick={() => handleDeleteAlbum(album._id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600"
-                          onClick={() => handleDeleteAlbum(album._id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
