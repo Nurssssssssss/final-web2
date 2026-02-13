@@ -9,6 +9,16 @@ interface AuthProps {
   onLogin: (username: string) => void;
 }
 
+interface LoginResponse {
+  token: string;
+  user?: {
+    _id: string;
+    username: string;
+    email: string;
+    role?: string;
+  };
+}
+
 export function Auth({ onLogin }: AuthProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
@@ -29,11 +39,13 @@ export function Auth({ onLogin }: AuthProps) {
 
       if (isLogin) {
         // 🔹 ЛОГИН
-        const res = await authAPI.login({ email, password });
+        const res = (await authAPI.login({ email, password })) as LoginResponse;
         // authAPI.login уже сохранил token в localStorage
 
         const name = res.user?.username || username || email;
         const userId = res.user?._id;
+
+        console.log('DEBUG login response', res);
 
         if (userId) {
           localStorage.setItem('currentUserId', userId);
@@ -45,10 +57,12 @@ export function Auth({ onLogin }: AuthProps) {
         // 🔹 РЕГИСТРАЦИЯ
         await authAPI.register({ username, email, password });
         // после успешной регистрации сразу логиним
-        const res = await authAPI.login({ email, password });
+        const res = (await authAPI.login({ email, password })) as LoginResponse;
 
         const name = res.user?.username || username || email;
         const userId = res.user?._id;
+
+        console.log('DEBUG register+login response', res);
 
         if (userId) {
           localStorage.setItem('currentUserId', userId);
