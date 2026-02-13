@@ -11,9 +11,6 @@ FrontX is a web application for storing and viewing images with album support an
 - Node.js  
 - npm or yarn  
 - MongoDB (local instance or MongoDB Atlas)
-![photo_1_2026-02-13_16-48-0![photo_1_2026-02-13_16-48-05](https://github.com/user-attachments/assets/a02d544d-d6f3-4203-9c6c-aa932627c690)
-
-https://github.com/user-attachments/assets/15307590-5c55-4c2d-b654-c7ba41d82122
 
 ### 2. Clone the project
 
@@ -303,8 +300,7 @@ Replace the image paths with real files in your repository (for example docs/scr
 
 1. Home page / Gallery
 Home Gallery
-![photo_1_2026-02-13_16-48-05](https://github.com/user-attachments/assets/ac7c6fc5-d29d-426f-8dba-5e273084d4f1)
-
+https://github.com/user-attachments/assets/ac7c6fc5-d29d-426f-8dba-5e273084d4f1
 
 Displays all images in a responsive masonry grid.
 
@@ -314,6 +310,7 @@ Hover effect with title and author.
 
 2. Filter and "My Images"
 Filter and My Images
+https://github.com/user-attachments/assets/7786b915-24ee-466b-9605-e975e3e425ef
 
 Dropdown to switch between:
 
@@ -327,6 +324,7 @@ When My Images is selected, the gallery shows only photos where userId === curre
 
 3. Photo modal
 Photo Modal
+https://github.com/user-attachments/assets/66135ce0-3123-4493-b37e-63099e658a40
 
 Large preview of the selected image.
 
@@ -336,6 +334,7 @@ Delete Image button is visible only to the owner of the photo.
 
 4. Auth: Login / Register
 Auth Page
+<img width="568" height="690" alt="image" src="https://github.com/user-attachments/assets/b04ed812-1c97-44eb-af6f-2fafa46ed731" />
 
 Separate forms for sign up and sign in.
 
